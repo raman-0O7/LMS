@@ -47,7 +47,7 @@ export const ChapterForm = ({
     try {
       await axios.post(`/api/courses/${courseId}/chapters`, values);
       toggleCreating();
-      toast.success("Chapter created");
+      toast.success("Chapter Created");
       router.refresh();
     } catch {
       toast.error("Somthing went wrong")
@@ -60,7 +60,7 @@ export const ChapterForm = ({
       await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
         list : updateData
       });
-      toast.success("Chapters reorder");
+      toast.success("Chapters Reordered");
       router.refresh();
     } catch{
       toast.error("Something went wrong");
