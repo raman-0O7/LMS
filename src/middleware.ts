@@ -6,7 +6,7 @@ const isProtectedRoutes = createRouteMatcher([
 
 ])
 
-const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/api/uploadthing(.*)']);
+const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/api/uploadthing(.*)', '/api/webhook']);
 export default clerkMiddleware((auth, req) =>{
   if(!isPublicRoute(req)) auth().protect();
 

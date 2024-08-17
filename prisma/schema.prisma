@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -11,7 +12,7 @@ datasource db {
 model Course {
   id String @id @default(uuid())
   userId String
-  title String @db.Text
+  title String @db.Text 
   description String? @db.Text
   isPublished Boolean @default(false)
   imageUrl String? @db.Text
@@ -29,6 +30,7 @@ model Course {
   updatedAt DateTime @updatedAt()
 
   @@index([categoryId])
+  @@fulltext([title])
 }
 
 model Category {
@@ -109,6 +111,7 @@ model Purchase {
   updatedAt DateTime @updatedAt
 
   @@index([courseId])
+  @@unique([userId, courseId])
 }
 
 model StripCustomer {
