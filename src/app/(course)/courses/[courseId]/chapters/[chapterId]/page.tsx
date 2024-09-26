@@ -1,6 +1,6 @@
 import { getChapter } from "@/actions/get-chapter";
 import { Banner } from "@/components/banner";
-import { auth } from "@clerk/nextjs/server";
+
 import { redirect } from "next/navigation";
 import { VideoPlayer } from "./_components/video-player";
 import { CourseEnrollButton } from "./_components/course-enroll-button";
@@ -8,13 +8,15 @@ import { Separator } from "@/components/ui/separator";
 import { Preview } from "@/components/preview";
 import { File } from "lucide-react";
 import { CourseProgressButton } from "./_components/course-progress-button";
+import { auth } from "@/auth";
 
 const ChapterIdPage = async ({
   params
 }: {
   params: { courseId: string; chapterId: string; }
 }) => {
-  const { userId } = auth();
+  const session = await auth();
+  const userId = session?.user?.id;
   if(!userId) {
     return redirect("/");
   }
@@ -37,7 +39,7 @@ const ChapterIdPage = async ({
 
   return ( 
     <div>
-      {userProgress?.isComplete && (
+      {userProgress?.isComplete && ( 
         <Banner 
           variant={"success"}
           label="You already completed this chapter"

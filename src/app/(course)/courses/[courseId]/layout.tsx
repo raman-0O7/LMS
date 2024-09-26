@@ -1,11 +1,12 @@
 
 import { getProgress } from '@/actions/get-progress';
 import { db } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation';
 import React from 'react'
 import { CourseSidebar } from './_components/course-sidebar';
 import { CourseNavbar } from './_components/course-navbar';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { auth } from '@/auth';
 
 export default async function CourseIdLayout({
   children,
@@ -17,7 +18,8 @@ export default async function CourseIdLayout({
   }
 }) {
 
-  const { userId } = auth();
+  const session = await auth();
+  const userId = session?.user?.id;
   if(!userId) {
     return redirect("/");
   }

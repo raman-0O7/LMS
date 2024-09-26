@@ -1,11 +1,14 @@
 import { getAnalytics } from "@/actions/get-analytics";
-import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation";
 import { DataCard } from "./_components/data-card";
 import { Chart } from "./_components/chart";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { auth } from "@/auth";
 
 export default async function AnalyticsPage() {
-  const { userId } = auth();
+  const session = await auth();
+
+  const userId = session?.user?.id;
   if(!userId) {
     return redirect("/");
   }

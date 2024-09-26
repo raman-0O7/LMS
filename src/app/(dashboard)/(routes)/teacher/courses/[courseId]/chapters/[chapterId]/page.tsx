@@ -1,6 +1,5 @@
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 import { ArrowLeft, Eye, LayoutDashboard, Video } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -10,11 +9,13 @@ import { ChapterAccessForm } from "./_components/chapter-access-form";
 import { ChapterVideoForm } from "./_components/chapter-video-form";
 import { Banner } from "@/components/banner";
 import { ChapterActions } from "./_components/chapter-actions";
+import { auth } from "@/auth";
 
 
 const ChapterIdPage = async ({ params } : { params: { courseId: string; chapterId: string}}) => {
+  const session = await auth();
 
-  const { userId } = auth();
+  const userId = session?.user?.id;
   if(!userId) {
     return redirect("/");
   }
@@ -48,7 +49,7 @@ const ChapterIdPage = async ({ params } : { params: { courseId: string; chapterI
   return ( 
     <>
     {!chapter.isPublished && (
-      <Banner label="This chapter is not published. This will visible in the course." variant="warning"/>
+      <Banner label="This chapter is not published. This will not be visible in the course." variant="warning"/>
     )}
     <div className="p-6">
       <div className="flex items-center justify-between">

@@ -22,7 +22,7 @@ const CourseIdPage = async ({
   if(!course) {
     return redirect("/");
   }
-  return redirect(`/courses/${params.courseId}/chapters/${course.chapters[0].id}`);;
+  return redirect(`/courses/${params.courseId}/chapters/${course.chapters[0].id}`);
 }
- 
+
 export default CourseIdPage;

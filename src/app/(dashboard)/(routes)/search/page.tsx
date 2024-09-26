@@ -1,10 +1,10 @@
 import { db } from "@/lib/db";
 import Categories from "./_components/categories";
 import SearchInput from "@/components/search-input";
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getCourses } from "@/actions/get-courses";
 import CourseList from "@/components/course-list";
+import { auth } from "@/auth";
 
 interface SearchPageProps {
   searchParams: {
@@ -15,7 +15,9 @@ interface SearchPageProps {
 const SearchPage = async ({
   searchParams
 }: SearchPageProps) => {
-  const { userId } = auth();
+  const session = await auth();
+
+  const userId = session?.user?.id;
   if(!userId) {
     return redirect("/");
   }

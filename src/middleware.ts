@@ -1,22 +1,46 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import authConfig from "@/auth.config";
+import NextAuth from "next-auth";
+import {
+  DEFAULT_REDIRECT_AFTER_LOGIN,
+  ApiAuthPrefix,
+  PublicRoutes,
+  AuthRoutes
+} from "@/route"
+import { NextRequest } from "next/server";
 
+const { auth } = NextAuth(authConfig);
 
-const isProtectedRoutes = createRouteMatcher([
-  '/(.*)',
+export default auth((req : NextRequest) => {
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
 
-])
+  const isApiRoute = nextUrl.pathname.startsWith(ApiAuthPrefix);
+  const isPublicRoute = PublicRoutes.includes(nextUrl.pathname);
+  const isAuthRoute = AuthRoutes.includes(nextUrl.pathname);
 
-const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/api/uploadthing(.*)', '/api/webhook']);
-export default clerkMiddleware((auth, req) =>{
-  if(!isPublicRoute(req)) auth().protect();
+  if(isApiRoute) {
+    console.log("Run"+ nextUrl.pathname);
+    if(nextUrl.pathname.startsWith("/api/auth/auth/login?error=OAuthAccountNotLinked")) {
+      console.log("Function started");
+      return Response.redirect(new URL("/auth/login?error=OAuthAccountNotLinked", nextUrl));
+    }
+    return null;
+  }
 
+  if(isAuthRoute) {
+    if(isLoggedIn) {
+      return Response.redirect(new URL(DEFAULT_REDIRECT_AFTER_LOGIN, nextUrl));
+    }
+    return null;
+  };
+
+  if(!isLoggedIn && !isPublicRoute) {
+    return Response.redirect(new URL("/auth/login", nextUrl));
+  }
+
+  return null;
 });
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
-};
+  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+}

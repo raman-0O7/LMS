@@ -1,7 +1,6 @@
 
 import { IconBadge } from '@/components/icon-badge';
 import { db } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
 import { DollarSign, LayoutDashboard, List, ListCheck } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react'
@@ -14,11 +13,15 @@ import { AttachmentForm } from './_components/attachment-form';
 import { ChapterForm } from './_components/chapter-form';
 import { Banner } from '@/components/banner';
 import { Actions } from './_components/actions';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { auth } from '@/auth';
 
 export default async function CourseIdPage({
   params
 }: { params : { courseId : string}}) {
-  const { userId } = auth();
+  const session = await auth();
+
+  const userId = session?.user?.id;
   const courseId = params.courseId;
 
   if(!userId) {

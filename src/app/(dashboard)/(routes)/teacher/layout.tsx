@@ -1,5 +1,4 @@
-import { isTeacher } from "@/lib/isTeacher"
-import { auth } from "@clerk/nextjs/server"
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
 export default async function TeacherLayout({
@@ -7,12 +6,14 @@ export default async function TeacherLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { userId } = auth();
+  const session = await auth();
+
+  const userId = session?.user?.id;
   if(!userId) return redirect("/");
   
-  if(!isTeacher(userId)) {
-    return redirect("/");
-  }
+  // if(!isTeacher(userId)) {
+  //   return redirect("/");
+  // }
 
   return <>{children}</>
 }
